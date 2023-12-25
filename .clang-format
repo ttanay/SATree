@@ -1,0 +1,51 @@
+BasedOnStyle: WebKit
+Language: Cpp
+AlignAfterOpenBracket: AlwaysBreak
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterClass: true
+    AfterControlStatement: true
+    AfterEnum: true
+    AfterFunction: true
+    AfterNamespace: true
+    AfterStruct: true
+    AfterUnion: true
+    BeforeCatch: true
+    BeforeElse: true
+    BeforeLambdaBody: true
+    IndentBraces: false
+BreakConstructorInitializersBeforeComma: false
+Cpp11BracedListStyle: true
+ColumnLimit: 140
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ExperimentalAutoDetectBinPacking: true
+UseTab: Never
+TabWidth: 4
+Standard: Cpp11
+PointerAlignment: Middle
+MaxEmptyLinesToKeep: 2
+KeepEmptyLinesAtTheStartOfBlocks: false
+AllowShortFunctionsOnASingleLine: InlineOnly
+AlwaysBreakTemplateDeclarations: true
+IndentCaseLabels: true
+SpaceAfterTemplateKeyword: true
+SpaceBeforeCpp11BracedList: false
+SortIncludes: true
+IndentPPDirectives: AfterHash
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^<[a-z_]+>'
+    Priority: 1
+  - Regex: '^<[a-z_]+.h>'
+    Priority: 2
+  - Regex: '^"'
+    Priority: 110
+  - Regex: '/'
+    Priority: 30
+  - Regex: '.*'
+    Priority: 40
+ReflowComments: false
+AlignEscapedNewlinesLeft: false
+AlignEscapedNewlines: DontAlign
+AlignTrailingComments: false
+FixNamespaceComments: true
