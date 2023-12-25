@@ -19,25 +19,40 @@ struct SATreeNode
     Point point;
     std::vector<SATreeNode *> neighbours;
     double covering_radius{0};
+
+    SATreeNode(Point p) : point(p) { }
+    ~SATreeNode()
+    {
+        if (neighbours.empty())
+            return;
+
+        for (auto n : neighbours)
+            if (n)
+                delete n;
+    }
 };
 
 class SATree
 {
     SATreeNode * root;
-    void build(SATreeNode *a, std::vector<Point> & S);
+    void build(SATreeNode * a, std::vector<Point> & S);
 
 public:
     SATree(std::vector<Point> & S)
     {
         // TODO: Select random element
-        root = new SATreeNode();
-        root->point = S.back();
+        root = new SATreeNode(S.back());
         S.pop_back();
         build(root, S);
     }
+    ~SATree()
+    {
+        if (root)
+            delete root;
+    }
 };
 
-void SATree::build(SATreeNode *a, std::vector<Point> & S)
+void SATree::build(SATreeNode * a, std::vector<Point> & S)
 {
     auto distance_from_a = [&a](Point p, Point q) { return distance(p, a->point) < distance(q, a->point); };
     std::sort(S.begin(), S.end(), distance_from_a);
@@ -59,8 +74,7 @@ void SATree::build(SATreeNode *a, std::vector<Point> & S)
         }
         if (add_to_neighbour)
         {
-            auto * n = new SATreeNode;
-            n->point = *v;
+            auto * n = new SATreeNode(*v);
             a->neighbours.push_back(n);
             // Delete from bag also
             S.erase(v);
@@ -74,12 +88,13 @@ void SATree::build(SATreeNode *a, std::vector<Point> & S)
     // Put remaining in the bag of the neighbour that is closest to it
     for (auto v : S)
     {
-        double min_distance {INFINITY};
-        int neighbour_idx;// {0}; Is initialization needed here?
+        double min_distance{INFINITY};
+        int neighbour_idx; // {0}; Is initialization needed here?
         for (int i = 0; i < bags.size(); i++)
         {
             auto d = distance(v, a->neighbours[i]->point);
-            if(d < min_distance) {
+            if (d < min_distance)
+            {
                 min_distance = d;
                 neighbour_idx = i;
             }
@@ -87,6 +102,6 @@ void SATree::build(SATreeNode *a, std::vector<Point> & S)
         bags[neighbour_idx].push_back(v);
     }
 
-    for(int i = 0; i < bags.size(); i++)
+    for (int i = 0; i < bags.size(); i++)
         build(a->neighbours[i], bags[i]);
 }
