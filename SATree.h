@@ -15,6 +15,7 @@ struct SATreeNode {
 class SATree {
     void build(SATreeNode *a, std::vector<Point> &S);
 public:
+    // TODO: Make private
     SATreeNode * root;
     SATree(std::vector<Point> & S);
     ~SATree();
