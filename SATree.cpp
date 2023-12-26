@@ -97,7 +97,7 @@ void SATree::print(SATreeNode * node, int space)
 {
     for (int i = 0; i < space; i++)
         std::cout << "  ";
-    std::cout << "|- (" << node->point.x << ", " << node->point.y << ") ";
+    std::cout << "|- " << node->point.to_string() << " ";
     std::cout << "|N(a)| = " << node->neighbours.size() << std::endl;
     for (auto n : node->neighbours)
         print(n, space + 1);
@@ -106,7 +106,7 @@ void SATree::print(SATreeNode * node, int space)
 std::string SATree::to_string(SATreeNode * node)
 {
     std::string res;
-    res += "{" + std::to_string(node->point.x) + ", " + std::to_string(node->point.y) + "}";
+    res += "{" + node->point.to_string() + "}";
     if (node->neighbours.size() > 0)
     {
         res += "(";
@@ -119,4 +119,40 @@ std::string SATree::to_string(SATreeNode * node)
         res += ")";
     }
     return res;
+}
+
+std::optional<Point> SATree::range_search(Point query, float radius)
+{
+    return range_search(root, query, radius, 0);
+}
+
+std::optional<Point> SATree::range_search(SATreeNode * a, Point query, float radius, float digression)
+{
+    auto dist_a_q = distance(a->point, query);
+    if (!((digression <= 2 * radius) && (dist_a_q <= a->covering_radius + radius)))
+        return std::nullopt;
+
+    if (dist_a_q <= radius)
+        return a->point;
+
+    // Calculate min distance
+    auto min_distance = dist_a_q;
+    for (auto c : a->neighbours)
+    {
+        auto d = distance(c->point, query);
+        if (d < min_distance)
+            min_distance = d;
+    }
+
+    for (auto b : a->neighbours)
+    {
+        auto dist_b_q = distance(b->point, query);
+        if (dist_b_q <= min_distance + (2 * radius))
+        {
+            auto res = range_search(b, query, radius, std::max(0.0f, digression + (dist_b_q - dist_a_q)));
+            if (res)
+                return res;
+        }
+    }
+    return std::nullopt;
 }
