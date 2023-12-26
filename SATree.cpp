@@ -2,59 +2,31 @@
 #include <cmath>
 #include <cstdint>
 #include <stdexcept>
-#include <vector>
+#include <iostream>
 
-struct Point
-{
-    int x;
-    int y;
-};
+#include "SATree.h"
 
 float distance(Point p, Point q)
 {
     return std::sqrt(std::pow((p.y - q.y), 2) + std::pow((p.x - q.x), 2));
 }
 
-struct SATreeNode
+SATreeNode::~SATreeNode()
 {
-    Point point;
-    std::vector<SATreeNode *> neighbours;
-    float covering_radius{0};
-
-    SATreeNode(Point p) : point(p) { }
-    ~SATreeNode()
-    {
-        if (neighbours.empty())
+    if (neighbours.empty())
             return;
 
-        for (auto n : neighbours)
-            if (n)
-                delete n;
-    }
-};
+    for (auto n : neighbours)
+        if (n)
+            delete n;
+}
 
-class SATree
+SATree::SATree(std::vector<Point> & S)
 {
-    SATreeNode * root;
-    void build(SATreeNode * a, std::vector<Point> & S);
-    Point range_search(SATreeNode *a, Point query, float radius, float digression);
-
-public:
-    SATree(std::vector<Point> & S)
-    {
-        // TODO: Select random element
-        root = new SATreeNode(S.back());
-        S.pop_back();
-        build(root, S);
-    }
-    ~SATree()
-    {
-        if (root)
-            delete root;
-    }
-
-    Point range_search(Point query, float radius);
-};
+    root = new SATreeNode(S.back());
+    S.pop_back();
+    build(root, S);
+}
 
 // TODO: reuse distances
 void SATree::build(SATreeNode * a, std::vector<Point> & S)
@@ -63,7 +35,8 @@ void SATree::build(SATreeNode * a, std::vector<Point> & S)
     std::sort(S.begin(), S.end(), distance_from_a);
 
     // Add `v` as neighbour if it is closer to `a` than its neighbours.
-    for (auto v = S.begin(); v != S.end(); v++) // for(auto v: S)
+    auto v = S.begin();
+    while(v != S.end())
     {
         a->covering_radius = std::max(a->covering_radius, distance(*v, a->point));
         bool add_to_neighbour{true};
@@ -84,6 +57,8 @@ void SATree::build(SATreeNode * a, std::vector<Point> & S)
             // Delete from bag also
             S.erase(v);
         }
+        else
+            v++;
     }
 
     // Create bags of the neighbours
@@ -112,37 +87,8 @@ void SATree::build(SATreeNode * a, std::vector<Point> & S)
 }
 
 
-Point SATree::range_search(Point query, float radius) {
-    return range_search(root, query, radius, 0);
-}
-
-
-Point SATree::range_search(SATreeNode *a, Point query, float radius, float digresion)
+SATree::~SATree()
 {
-    return Point{-1, -1};
+    if(root)
+        delete root;
 }
-
-// TODO: How does this terminate and how do we report back the answer??w
-// Point SATree::range_search(SATreeNode *a, Point query, float radius, float digression) {
-//     auto dist_a_q = distance(a->point, query);
-//     if(!(digression <= 2 * radius &&
-//         dist_a_q <= a->covering_radius + radius))
-//         return Point{-1, -1}; // Sentinel value. TODO: replace
-
-//     if(dist_a_q < radius)
-//         return a->point;
-
-//     // Calculate min_d
-//     auto min_distance = distance(a->point, query);
-//     for(auto c: a->neighbours) {
-//         auto d = distance(c->point, query);
-//         if(d < min_distance)
-//             min_distance = d;
-//     }
-
-//     for(auto b: a->neighbours) {
-//         auto dist_b_q = distance(b->point, query);
-//         if(dist_b_q <= min_distance + (2 * radius))
-//             range_search(b, query, radius, std::max(0.0f, digression + (dist_b_q - dist_a_q)));
-//     }
-// }
