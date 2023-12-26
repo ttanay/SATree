@@ -92,3 +92,29 @@ SATree::~SATree()
     if(root)
         delete root;
 }
+
+void SATree::print(SATreeNode *node, int space)
+{
+    for(int i = 0; i < space; i++)
+        std::cout << "  ";
+    std::cout << "|- (" << node->point.x << ", " << node->point.y << ") ";
+    std::cout << "|N(a)| = " << node->neighbours.size() << std::endl;
+    for(auto n: node->neighbours)
+        print(n, space+1);
+}
+
+std::string SATree::to_string(SATreeNode *node)
+{
+    std::string res;
+    res += "{" + std::to_string(node->point.x) + ", " + std::to_string(node->point.y) + "}";
+    if(node->neighbours.size() > 0) {
+        res += "(";
+        for(auto n: node->neighbours) {
+            if(n != *(node->neighbours.begin()))
+                res += ",";
+            res += to_string(n);
+        }
+        res += ")";
+    }
+    return res;
+}

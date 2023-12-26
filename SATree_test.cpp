@@ -2,32 +2,6 @@
 #include <iostream>
 #include <string>
 
-void print(SATreeNode *node, int space)
-{
-    for(int i = 0; i < space; i++)
-        std::cout << "  ";
-    std::cout << "|- (" << node->point.x << ", " << node->point.y << ") ";
-    std::cout << "|N(a)| = " << node->neighbours.size() << std::endl;
-    for(auto n: node->neighbours)
-        print(n, space+1);
-}
-
-std::string stringify(SATreeNode *node)
-{
-    std::string res;
-    res += "{" + std::to_string(node->point.x) + ", " + std::to_string(node->point.y) + "}";
-    if(node->neighbours.size() > 0) {
-        res += "(";
-        for(auto n: node->neighbours) {
-            if(n != *(node->neighbours.begin()))
-                res += ",";
-            res += stringify(n);
-        }
-        res += ")";
-    }
-    return res;
-}
-
 enum TestCaseStatus { PASS, FAIL };
 struct TestCaseResult
 {
@@ -52,7 +26,7 @@ TestCaseResult test_case1(const std::string &name)
         {4, 4}
     };
     SATree tree(input);
-    std::string res = stringify(tree.root);
+    std::string res = tree.to_string();
     /**
         |- (4, 4) |N(a)| = 2
             |- (3, 3) |N(a)| = 1
@@ -77,7 +51,7 @@ TestCaseResult test_case2(const std::string &name) {
         {-1, -1}
     };
     SATree tree(input);
-    auto res = stringify(tree.root);
+    auto res = tree.to_string();
     // Note: the {-5,-3} should be a child of {-3,-3} because it is the
     //  closest to the pivot(`a`) at that point in time
     /**
