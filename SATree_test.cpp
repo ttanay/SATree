@@ -27,8 +27,8 @@ struct TestCaseResult
 
 TestCaseResult test_case1(const std::string & name)
 {
-    Points input{{3, 3}, {5, 3}, {2, 2}, {4, 4}};
-    SATree tree(input);
+    Points<2> input{{3, 3}, {5, 3}, {2, 2}, {4, 4}};
+    SATree<2> tree(input);
     std::string res = tree.to_string();
     /**
         |- (4, 4) |N(a)| = 2
@@ -36,7 +36,7 @@ TestCaseResult test_case1(const std::string & name)
                 |- (2, 2) |N(a)| = 0
             |- (5, 3) |N(a)| = 0
     */
-    std::string expected = "{(4, 4)}({(3, 3)}({(2, 2)}),{(5, 3)})";
+    std::string expected = "{(4.000000, 4.000000)}({(3.000000, 3.000000)}({(2.000000, 2.000000)}),{(5.000000, 3.000000)})";
     if (res == expected)
         return {name, TestCaseStatus::PASS, ""};
     else
@@ -48,8 +48,8 @@ TestCaseResult test_case1(const std::string & name)
 
 TestCaseResult test_case2(const std::string & name)
 {
-    Points input{{-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
-    SATree tree(input);
+    Points<2> input{{-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
+    SATree<2> tree(input);
     auto res = tree.to_string();
     // Note: the {-5,-3} should be a child of {-3,-3} because it is the
     //  closest to the pivot(`a`) at that point in time
@@ -61,7 +61,7 @@ TestCaseResult test_case2(const std::string & name)
         |- (-5, -3) |N(a)| = 0
 
     */
-    std::string expected = "{(-1, -1)}({(-3, -3)}({(-3, -4)}({(-4, -4)}),{(-5, -3)}))";
+    std::string expected = "{(-1.000000, -1.000000)}({(-3.000000, -3.000000)}({(-3.000000, -4.000000)}({(-4.000000, -4.000000)}),{(-5.000000, -3.000000)}))";
     if (res == expected)
         return {name, TestCaseStatus::PASS, ""};
     else
@@ -73,10 +73,10 @@ TestCaseResult test_case2(const std::string & name)
 
 TestCaseResult test_case3(const std::string & name)
 {
-    Points input{{-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
-    SATree tree(input);
+    Points<2> input{{-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
+    SATree<2> tree(input);
     auto res = tree.range_search({-6, -2}, 2.0);
-    Point expected{-5, -3};
+    Point<2> expected{-5, -3};
     if (res && res.value() == expected)
     {
         return {name, TestCaseStatus::PASS, ""};
@@ -92,10 +92,10 @@ TestCaseResult test_case3(const std::string & name)
 
 TestCaseResult test_case4(const std::string & name)
 {
-    Points input{{-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
-    SATree tree(input);
+    Points<2> input{{-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
+    SATree<2> tree(input);
     auto res = tree.range_search({-6, -2}, 1.0);
-    Point expected{-5, -3};
+    Point<2> expected{-5, -3};
     if (!res)
     {
         return {name, TestCaseStatus::PASS, ""};
@@ -109,11 +109,11 @@ TestCaseResult test_case4(const std::string & name)
 
 TestCaseResult test_case5(const std::string & name)
 {
-    Points input{{1, 1}, {3, 3}, {5, 3}, {3, 4}, {6, 4}, {-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
-    SATree tree(input);
+    Points<2> input{{1, 1}, {3, 3}, {5, 3}, {3, 4}, {6, 4}, {-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
+    SATree<2> tree(input);
     auto res = tree.nearest_neighbour_search({-4, -5}, 2);
 
-    kNNResult expected{{{-3, -4}, (float)std::sqrt(2.0)}, {{-4, -4}, 1.0}};
+    kNNResult<2> expected{{{-3, -4}, (float)std::sqrt(2.0)}, {{-4, -4}, 1.0}};
 
     if (res.size() != 2)
     {
@@ -138,8 +138,8 @@ TestCaseResult test_case5(const std::string & name)
 
 TestCaseResult test_case6(const std::string &name)
 {
-    Points input{{1, 1}, {3, 3}, {5, 3}, {3, 4}, {6, 4}, {-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
-    SATree tree(input);
+    Points<2> input{{1, 1}, {3, 3}, {5, 3}, {3, 4}, {6, 4}, {-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
+    SATree<2> tree(input);
     if (!tree.nearest_neighbour_search({-4, -5}, 0).empty())
     {
         std::string err = "Expected empty result";
