@@ -198,7 +198,7 @@ S & Container(std::priority_queue<T, S, C> & q)
     return HackedQueue::Container(q);
 }
 
-std::vector<kNNResultTuple> SATree::nearest_neighbour_search(Point query, int k)
+kNNResult SATree::nearest_neighbour_search(Point query, int k)
 {
     if (!k) // Early exit
         return {};

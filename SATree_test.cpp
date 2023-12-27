@@ -113,7 +113,7 @@ TestCaseResult test_case5(const std::string & name)
     SATree tree(input);
     auto res = tree.nearest_neighbour_search({-4, -5}, 2);
 
-    std::vector<kNNResultTuple> expected{{{-3, -4}, (float)std::sqrt(2.0)}, {{-4, -4}, 1.0}};
+    kNNResult expected{{{-3, -4}, (float)std::sqrt(2.0)}, {{-4, -4}, 1.0}};
 
     if (res.size() != 2)
     {

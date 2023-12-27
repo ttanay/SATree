@@ -33,6 +33,7 @@ struct kNNResultTuple
     friend bool operator<(const kNNResultTuple & self, const kNNResultTuple & other);
     friend bool operator==(const kNNResultTuple & self, const kNNResultTuple & other);
 };
+using kNNResult = std::vector<kNNResultTuple>;
 
 class SATree
 {
@@ -52,5 +53,5 @@ public:
     std::string to_string() { return to_string(root); }
     std::optional<Point> range_search(Point query, float radius);
 
-    std::vector<kNNResultTuple> nearest_neighbour_search(Point query, int k);
+    kNNResult nearest_neighbour_search(Point query, int k);
 };
