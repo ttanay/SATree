@@ -1,7 +1,7 @@
+#include <cmath>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <cmath>
 
 #include "SATree.h"
 
@@ -107,41 +107,44 @@ TestCaseResult test_case4(const std::string & name)
     }
 }
 
-TestCaseResult test_case5(const std::string &name)
+TestCaseResult test_case5(const std::string & name)
 {
-
-    Points input{
-        {1, 1}, {3, 3}, {5, 3}, {3, 4}, {6, 4},
-        {-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
+    Points input{{1, 1}, {3, 3}, {5, 3}, {3, 4}, {6, 4}, {-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
     SATree tree(input);
     auto res = tree.nearest_neighbour_search({-4, -5}, 2);
 
     std::vector<kNNResultTuple> expected{{{-3, -4}, (float)std::sqrt(2.0)}, {{-4, -4}, 1.0}};
 
-    if(res.size() != 2)
+    if (res.size() != 2)
     {
         std::string err = "Expected size: 2; Got: " + std::to_string(res.size());
         return {name, TestCaseStatus::FAIL, err};
     }
 
-    if(res != expected)
+    if (res != expected)
     {
         std::string err = "Expected: [";
-        for(auto i: expected)
+        for (auto i : expected)
             err += i.to_string();
         err += "]; Got: [";
-        for(auto i: res)
+        for (auto i : res)
             err += i.to_string();
         err += "]";
         return {name, TestCaseStatus::FAIL, err};
     }
 
-    if(!tree.nearest_neighbour_search({-4, -5}, 0).empty())
+    return {name, TestCaseStatus::PASS, ""};
+}
+
+TestCaseResult test_case6(const std::string &name)
+{
+    Points input{{1, 1}, {3, 3}, {5, 3}, {3, 4}, {6, 4}, {-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
+    SATree tree(input);
+    if (!tree.nearest_neighbour_search({-4, -5}, 0).empty())
     {
         std::string err = "Expected empty result";
         return {name, TestCaseStatus::FAIL, err};
     }
-
     return {name, TestCaseStatus::PASS, ""};
 }
 
@@ -152,5 +155,6 @@ int main(int argc, char ** argv)
     test_case3("Range search").display();
     test_case4("Range search null").display();
     test_case5("kNN Search").display();
+    test_case6("kNN Search empty").display();
     return 0;
 }

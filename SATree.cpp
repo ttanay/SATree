@@ -6,7 +6,8 @@
 #include <iostream>
 #include <stdexcept>
 
-bool operator==(const Point & self, const Point &other){
+bool operator==(const Point & self, const Point & other)
+{
     return self.x == other.x && self.y == other.y;
 }
 
@@ -188,18 +189,18 @@ bool operator==(const kNNResultTuple & self, const kNNResultTuple & other)
 
 // Hack borrowed from: https://stackoverflow.com/questions/1185252/is-there-a-way-to-access-the-underlying-container-of-stl-container-adaptors
 template <class T, class S, class C>
-    S& Container(std::priority_queue<T, S, C>& q) {
-        struct HackedQueue : private std::priority_queue<T, S, C> {
-            static S& Container(std::priority_queue<T, S, C>& q) {
-                return q.*&HackedQueue::c;
-            }
-        };
+S & Container(std::priority_queue<T, S, C> & q)
+{
+    struct HackedQueue : private std::priority_queue<T, S, C>
+    {
+        static S & Container(std::priority_queue<T, S, C> & q) { return q.*&HackedQueue::c; }
+    };
     return HackedQueue::Container(q);
 }
 
 std::vector<kNNResultTuple> SATree::nearest_neighbour_search(Point query, int k)
 {
-    if(!k) // Early exit
+    if (!k) // Early exit
         return {};
 
     auto dist_q_a = distance(root->point, query);

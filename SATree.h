@@ -9,7 +9,7 @@ struct Point
     int y;
 
     std::string to_string() { return "(" + std::to_string(x) + ", " + std::to_string(y) + ")"; }
-    friend bool operator==(const Point&self, const Point &other);
+    friend bool operator==(const Point & self, const Point & other);
 };
 using Points = std::vector<Point>;
 
@@ -31,7 +31,7 @@ struct kNNResultTuple
     std::string to_string() { return "{" + p.to_string() + ", " + std::to_string(distance) + "}"; }
 
     friend bool operator<(const kNNResultTuple & self, const kNNResultTuple & other);
-    friend bool operator==(const kNNResultTuple &self, const kNNResultTuple & other);
+    friend bool operator==(const kNNResultTuple & self, const kNNResultTuple & other);
 };
 
 class SATree
