@@ -6,6 +6,10 @@
 #include <iostream>
 #include <stdexcept>
 
+bool operator==(const Point & self, const Point &other){
+    return self.x == other.x && self.y == other.y;
+}
+
 float distance(Point p, Point q)
 {
     return std::sqrt(std::pow((p.y - q.y), 2) + std::pow((p.x - q.x), 2));
@@ -155,4 +159,82 @@ std::optional<Point> SATree::range_search(SATreeNode * a, Point query, float rad
         }
     }
     return std::nullopt;
+}
+
+struct PromisingSubtree
+{
+    SATreeNode * node;
+    float lbound;
+    float digression;
+
+    friend bool operator>(const PromisingSubtree & self, const PromisingSubtree & other);
+};
+
+bool operator>(const PromisingSubtree & self, const PromisingSubtree & other)
+{
+    return self.lbound > other.lbound;
+}
+
+
+bool operator<(const kNNResultTuple & self, const kNNResultTuple & other)
+{
+    return self.distance < other.distance;
+}
+
+kNNResult SATree::nearest_neighbour_search(Point query, int k)
+{
+    if(!k) // Early exit
+        return {};
+
+    auto dist_q_a = distance(root->point, query);
+
+    // Min queue by lower bound on distance from the `query`
+    std::priority_queue<PromisingSubtree, std::vector<PromisingSubtree>, std::greater<PromisingSubtree>> q;
+    q.push({root, std::max(0.0f, dist_q_a - root->covering_radius), 0});
+
+    kNNResult result;
+    float radius = INFINITY;
+
+    while (!q.empty())
+    {
+        auto [b, lbound, digression] = q.top();
+        q.pop();
+
+        // No more good answers
+        if (lbound > radius)
+            return result;
+
+        result.push({b->point, distance(b->point, query)});
+
+        if (result.size() > k)
+            result.pop();
+        else if (result.size() == k)
+            radius = result.top().distance;
+
+        // closest point to query among b U N(b)
+        Point c{b->point};
+        float closest_neighbour_distance = distance(b->point, query);
+        for (auto n : b->neighbours)
+        {
+            auto d = distance(n->point, query);
+            if (d < closest_neighbour_distance)
+            {
+                closest_neighbour_distance = d;
+                c = n->point;
+            }
+        }
+
+        for (auto n : b->neighbours)
+        {
+            auto new_digression = std::max(0.0f, digression + distance(query, n->point) - distance(query, root->point));
+            PromisingSubtree x{
+                n,
+                std::max(
+                    {lbound, (distance(query, n->point) - distance(query, c)) / 2, new_digression,
+                     distance(query, n->point) - n->covering_radius}),
+                new_digression};
+            q.push(x);
+        }
+    }
+    return result;
 }

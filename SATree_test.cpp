@@ -19,7 +19,7 @@ struct TestCaseResult
         if (status == TestCaseStatus::PASS)
             std::cout << "TestCase \"" << name << "\": PASSED" << std::endl;
         else
-            std::cout << "TestCase \"" << name << "\": FAILED with" << err << std::endl;
+            std::cout << "TestCase \"" << name << "\": FAILED with " << err << std::endl;
     }
 };
 
@@ -105,11 +105,57 @@ TestCaseResult test_case4(const std::string & name)
     }
 }
 
+TestCaseResult test_case5(const std::string &name)
+{
+
+    Points input{
+        {1, 1}, {3, 3}, {5, 3}, {3, 4}, {6, 4},
+        {-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
+    SATree tree(input);
+    auto res = tree.nearest_neighbour_search({-4, -5}, 2);
+
+    std::vector<Point> result;
+    std::vector<Point> expected{{-3, -4}, {-4, -4}};
+
+    if(res.size() != 2)
+    {
+        std::string err = "Expected size: 2; Got: " + std::to_string(res.size());
+        return {name, TestCaseStatus::FAIL, err};
+    }
+
+    while(!res.empty())
+    {
+        result.push_back(res.top().p);
+        res.pop();
+    }
+
+    if(result != expected)
+    {
+        std::string err = "Expected: [";
+        for(auto i: expected)
+            err += i.to_string();
+        err += "]; Got: [";
+        for(auto i: result)
+            err += i.to_string();
+        err += "]";
+        return {name, TestCaseStatus::FAIL, err};
+    }
+
+    if(!tree.nearest_neighbour_search({-4, -5}, 0).empty())
+    {
+        std::string err = "Expected empty result";
+        return {name, TestCaseStatus::FAIL, err};
+    }
+
+    return {name, TestCaseStatus::PASS, ""};
+}
+
 int main(int argc, char ** argv)
 {
     test_case1("Basic tree construction").display();
     test_case2("Skipped neighbour").display();
     test_case3("Range search").display();
     test_case4("Range search null").display();
+    test_case5("kNN Search").display();
     return 0;
 }
