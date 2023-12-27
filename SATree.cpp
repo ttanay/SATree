@@ -181,7 +181,23 @@ bool operator<(const kNNResultTuple & self, const kNNResultTuple & other)
     return self.distance < other.distance;
 }
 
-kNNResult SATree::nearest_neighbour_search(Point query, int k)
+bool operator==(const kNNResultTuple & self, const kNNResultTuple & other)
+{
+    return self.p == other.p && self.distance == other.distance;
+}
+
+// Hack borrowed from: https://stackoverflow.com/questions/1185252/is-there-a-way-to-access-the-underlying-container-of-stl-container-adaptors
+template <class T, class S, class C>
+    S& Container(std::priority_queue<T, S, C>& q) {
+        struct HackedQueue : private std::priority_queue<T, S, C> {
+            static S& Container(std::priority_queue<T, S, C>& q) {
+                return q.*&HackedQueue::c;
+            }
+        };
+    return HackedQueue::Container(q);
+}
+
+std::vector<kNNResultTuple> SATree::nearest_neighbour_search(Point query, int k)
 {
     if(!k) // Early exit
         return {};
@@ -192,7 +208,7 @@ kNNResult SATree::nearest_neighbour_search(Point query, int k)
     std::priority_queue<PromisingSubtree, std::vector<PromisingSubtree>, std::greater<PromisingSubtree>> q;
     q.push({root, std::max(0.0f, dist_q_a - root->covering_radius), 0});
 
-    kNNResult result;
+    std::priority_queue<kNNResultTuple> result;
     float radius = INFINITY;
 
     while (!q.empty())
@@ -202,7 +218,7 @@ kNNResult SATree::nearest_neighbour_search(Point query, int k)
 
         // No more good answers
         if (lbound > radius)
-            return result;
+            return Container(result);
 
         result.push({b->point, distance(b->point, query)});
 
@@ -236,5 +252,5 @@ kNNResult SATree::nearest_neighbour_search(Point query, int k)
             q.push(x);
         }
     }
-    return result;
+    return Container(result);
 }

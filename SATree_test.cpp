@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <vector>
+#include <cmath>
 
 #include "SATree.h"
 
@@ -114,8 +116,7 @@ TestCaseResult test_case5(const std::string &name)
     SATree tree(input);
     auto res = tree.nearest_neighbour_search({-4, -5}, 2);
 
-    std::vector<Point> result;
-    std::vector<Point> expected{{-3, -4}, {-4, -4}};
+    std::vector<kNNResultTuple> expected{{{-3, -4}, (float)std::sqrt(2.0)}, {{-4, -4}, 1.0}};
 
     if(res.size() != 2)
     {
@@ -123,19 +124,13 @@ TestCaseResult test_case5(const std::string &name)
         return {name, TestCaseStatus::FAIL, err};
     }
 
-    while(!res.empty())
-    {
-        result.push_back(res.top().p);
-        res.pop();
-    }
-
-    if(result != expected)
+    if(res != expected)
     {
         std::string err = "Expected: [";
         for(auto i: expected)
             err += i.to_string();
         err += "]; Got: [";
-        for(auto i: result)
+        for(auto i: res)
             err += i.to_string();
         err += "]";
         return {name, TestCaseStatus::FAIL, err};

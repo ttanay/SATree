@@ -28,9 +28,11 @@ struct kNNResultTuple
     Point p;
     float distance; // Distance from query
 
+    std::string to_string() { return "{" + p.to_string() + ", " + std::to_string(distance) + "}"; }
+
     friend bool operator<(const kNNResultTuple & self, const kNNResultTuple & other);
+    friend bool operator==(const kNNResultTuple &self, const kNNResultTuple & other);
 };
-using kNNResult = std::priority_queue<kNNResultTuple>;
 
 class SATree
 {
@@ -50,5 +52,5 @@ public:
     std::string to_string() { return to_string(root); }
     std::optional<Point> range_search(Point query, float radius);
 
-    kNNResult nearest_neighbour_search(Point query, int k);
+    std::vector<kNNResultTuple> nearest_neighbour_search(Point query, int k);
 };
