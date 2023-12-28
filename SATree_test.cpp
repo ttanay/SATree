@@ -148,6 +148,32 @@ TestCaseResult test_case6(const std::string &name)
     return {name, TestCaseStatus::PASS, ""};
 }
 
+TestCaseResult test_case7(const std::string &name)
+{
+    Points<3> input{{1, 1, 1}, {3, 3, 3}, {5, 3, 2}, {3, 4, 1}, {6, 4, 2}};
+    SATree<3> tree(input);
+    auto res = tree.nearest_neighbour_search({1, 1, 0}, 1);
+
+    kNNResult<3> expected{{{1, 1, 1}, 1.0}};
+
+    if(res.size() != 1)
+        return {name, TestCaseStatus::FAIL, "Result does not have 1 element"};
+
+    if (res != expected)
+    {
+        std::string err = "Expected: [";
+        for (auto i : expected)
+            err += i.to_string();
+        err += "]; Got: [";
+        for (auto i : res)
+            err += i.to_string();
+        err += "]";
+        return {name, TestCaseStatus::FAIL, err};
+    }
+
+    return {name, TestCaseStatus::PASS, ""};
+}
+
 int main(int argc, char ** argv)
 {
     test_case1("Basic tree construction").display();
@@ -156,5 +182,6 @@ int main(int argc, char ** argv)
     test_case4("Range search null").display();
     test_case5("kNN Search").display();
     test_case6("kNN Search empty").display();
+    test_case7("kNN 3-dimensions").display();
     return 0;
 }
