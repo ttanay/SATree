@@ -1,15 +1,9 @@
-/**
-Files:
-1. .fvecs:
-2. .bvecs: Base vectors to search in
-3. .ivecs: Ground Truth
-*/
-
-
 #include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
+
+// Source: http://corpus-texmex.irisa.fr/
 
 class BaseVecsReader
 {
@@ -86,25 +80,3 @@ public:
         return vec;
     }
 };
-
-int main(int argc, char ** argv)
-{
-    if (argc != 2)
-        throw std::invalid_argument("Filename required");
-
-
-    IVecsReader reader(argv[1]);
-    int lc{0};
-    std::cout << "Dimensions: " << reader.dimension() << std::endl;
-    while(!reader.eof() && lc < 10)
-    {
-        int *vec = reader.readvec();
-        for(int i = 0; i < reader.dimension(); i++)
-            std::cout << vec[i] << ", ";
-        std::cout << std::endl;
-        std::cout<< "---" << std::endl;
-        lc++;
-    }
-    std::cout << "Lines: " << reader.num_vectors() << std::endl;
-    return 0;
-}
