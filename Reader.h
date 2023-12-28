@@ -2,6 +2,7 @@
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
+#include <vector>
 
 // Source: http://corpus-texmex.irisa.fr/
 
@@ -50,16 +51,16 @@ class FVecsReader: public BaseVecsReader
 public:
     FVecsReader(char *filename_): BaseVecsReader(filename_) {}
 
-    float * readvec()
+    std::vector<float> readvec()
     {
         if(eof())
             throw std::runtime_error("EOF reached");
 
+        std::vector<float> res(d);
         skip_dim();
-        float * vec = new float[dimension()];
-        fread(vec, sizeof(float), DIM_SIZE, fptr);
+        fread(&res, sizeof(float), DIM_SIZE, fptr);
         curr++;
-        return vec;
+        return res;
     }
 };
 
@@ -68,15 +69,15 @@ class IVecsReader: public BaseVecsReader
 public:
     IVecsReader(char *filename_): BaseVecsReader(filename_) {}
 
-    int * readvec()
+    std::vector<int> readvec()
     {
         if(eof())
             throw std::runtime_error("EOF reached");
 
+        std::vector<int> res(d);
         skip_dim();
-        int * vec = new int[dimension()];
-        fread(vec, sizeof(int), DIM_SIZE, fptr);
+        fread(&res, sizeof(int), DIM_SIZE, fptr);
         curr++;
-        return vec;
+        return res;
     }
 };

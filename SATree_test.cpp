@@ -27,10 +27,15 @@ struct TestCaseResult
 
 TestCaseResult test_case3(const std::string & name)
 {
-    Points<2> input{{-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
-    SATree<2> tree(input);
-    auto res = tree.range_search({-6, -2}, 2.0);
-    Point<2> expected{-5, -3};
+    Points input{
+        {{-3, -3}},
+        {{-3, -4}},
+        {{-5, -3}},
+        {{-4, -4}},
+        {{-1, -1}}};
+    SATree tree(input);
+    auto res = tree.range_search({{-6, -2}}, 2.0);
+    Point expected{{-5, -3}};
     if (res && res.value() == expected)
     {
         return {name, TestCaseStatus::PASS, ""};
@@ -46,10 +51,10 @@ TestCaseResult test_case3(const std::string & name)
 
 TestCaseResult test_case4(const std::string & name)
 {
-    Points<2> input{{-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
-    SATree<2> tree(input);
-    auto res = tree.range_search({-6, -2}, 1.0);
-    Point<2> expected{-5, -3};
+    Points input{{{-3, -3}}, {{-3, -4}}, {{-5, -3}}, {{-4, -4}}, {{-1, -1}}};
+    SATree tree(input);
+    auto res = tree.range_search({{-6, -2}}, 1.0);
+    Point expected{{-5, -3}};
     if (!res)
     {
         return {name, TestCaseStatus::PASS, ""};
@@ -63,11 +68,11 @@ TestCaseResult test_case4(const std::string & name)
 
 TestCaseResult test_case5(const std::string & name)
 {
-    Points<2> input{{1, 1}, {3, 3}, {5, 3}, {3, 4}, {6, 4}, {-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
-    SATree<2> tree(input);
-    auto res = tree.nearest_neighbour_search({-4, -5}, 2);
+    Points input{{{1, 1}}, {{3, 3}}, {{5, 3}}, {{3, 4}}, {{6, 4}}, {{-3, -3}}, {{-3, -4}}, {{-5, -3}}, {{-4, -4}}, {{-1, -1}}};
+    SATree tree(input);
+    auto res = tree.nearest_neighbour_search({{-4, -5}}, 2);
 
-    kNNResult<2> expected{{{-3, -4}, (float)std::sqrt(2.0)}, {{-4, -4}, 1.0}};
+    kNNResult expected{{{{-3, -4}}, (float)std::sqrt(2.0)}, {{{-4, -4}}, 1.0}};
 
     if (res.size() != 2)
     {
@@ -92,9 +97,9 @@ TestCaseResult test_case5(const std::string & name)
 
 TestCaseResult test_case6(const std::string &name)
 {
-    Points<2> input{{1, 1}, {3, 3}, {5, 3}, {3, 4}, {6, 4}, {-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
-    SATree<2> tree(input);
-    if (!tree.nearest_neighbour_search({-4, -5}, 0).empty())
+    Points input{{{1, 1}}, {{3, 3}}, {{5, 3}}, {{3, 4}}, {{6, 4}}, {{-3, -3}}, {{-3, -4}}, {{-5, -3}}, {{-4, -4}}, {{-1, -1}}};
+    SATree tree(input);
+    if (!tree.nearest_neighbour_search({{-4, -5}}, 0).empty())
     {
         std::string err = "Expected empty result";
         return {name, TestCaseStatus::FAIL, err};
@@ -104,11 +109,11 @@ TestCaseResult test_case6(const std::string &name)
 
 TestCaseResult test_case7(const std::string &name)
 {
-    Points<3> input{{1, 1, 1}, {3, 3, 3}, {5, 3, 2}, {3, 4, 1}, {6, 4, 2}};
-    SATree<3> tree(input);
-    auto res = tree.nearest_neighbour_search({1, 1, 0}, 1);
+    Points input{{{1, 1, 1}}, {{3, 3, 3}}, {{5, 3, 2}}, {{3, 4, 1}}, {{6, 4, 2}}};
+    SATree tree(input);
+    auto res = tree.nearest_neighbour_search({{1, 1, 0}}, 1);
 
-    kNNResult<3> expected{{{1, 1, 1}, 1.0}};
+    kNNResult expected{{{{1, 1, 1}}, 1.0}};
 
     if(res.size() != 1)
         return {name, TestCaseStatus::FAIL, "Result does not have 1 element"};
