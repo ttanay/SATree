@@ -25,52 +25,6 @@ struct TestCaseResult
     }
 };
 
-TestCaseResult test_case1(const std::string & name)
-{
-    Points<2> input{{3, 3}, {5, 3}, {2, 2}, {4, 4}};
-    SATree<2> tree(input);
-    std::string res = tree.to_string();
-    /**
-        |- (4, 4) |N(a)| = 2
-            |- (3, 3) |N(a)| = 1
-                |- (2, 2) |N(a)| = 0
-            |- (5, 3) |N(a)| = 0
-    */
-    std::string expected = "{(4.000000, 4.000000)}({(3.000000, 3.000000)}({(2.000000, 2.000000)}),{(5.000000, 3.000000)})";
-    if (res == expected)
-        return {name, TestCaseStatus::PASS, ""};
-    else
-    {
-        auto err = "Expected: " + expected + "; Got: " + res;
-        return {name, TestCaseStatus::FAIL, err};
-    }
-}
-
-TestCaseResult test_case2(const std::string & name)
-{
-    Points<2> input{{-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
-    SATree<2> tree(input);
-    auto res = tree.to_string();
-    // Note: the {-5,-3} should be a child of {-3,-3} because it is the
-    //  closest to the pivot(`a`) at that point in time
-    /**
-    |- (-1, -1) |N(a)| = 1
-        |- (-3, -3) |N(a)| = 2
-            |- (-3, -4) |N(a)| = 1
-                |- (-4, -4) |N(a)| = 0
-        |- (-5, -3) |N(a)| = 0
-
-    */
-    std::string expected = "{(-1.000000, -1.000000)}({(-3.000000, -3.000000)}({(-3.000000, -4.000000)}({(-4.000000, -4.000000)}),{(-5.000000, -3.000000)}))";
-    if (res == expected)
-        return {name, TestCaseStatus::PASS, ""};
-    else
-    {
-        auto err = "Expected: " + expected + "; Got: " + res;
-        return {name, TestCaseStatus::FAIL, err};
-    }
-}
-
 TestCaseResult test_case3(const std::string & name)
 {
     Points<2> input{{-3, -3}, {-3, -4}, {-5, -3}, {-4, -4}, {-1, -1}};
@@ -176,8 +130,6 @@ TestCaseResult test_case7(const std::string &name)
 
 int main(int argc, char ** argv)
 {
-    test_case1("Basic tree construction").display();
-    test_case2("Skipped neighbour").display();
     test_case3("Range search").display();
     test_case4("Range search null").display();
     test_case5("kNN Search").display();

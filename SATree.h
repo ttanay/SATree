@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <cstdlib>
 #include <iostream>
 #include <optional>
 #include <queue>
@@ -21,9 +22,6 @@ struct Point
 
 template <int D>
 using Points = std::vector<Point<D>>;
-
-// TODO: Change from operating on points, to a float vector ,i.e., float[].
-// float*
 
 template <int D>
 struct SATreeNode
@@ -122,8 +120,9 @@ SATreeNode<D>::~SATreeNode()
 template <int D>
 SATree<D>::SATree(std::vector<Point<D>> & S)
 {
-    root = new SATreeNode<D>(S.back());
-    S.pop_back();
+    int root_idx = rand() % S.size();
+    root = new SATreeNode<D>(S[root_idx]);
+    S.erase(S.begin() + root_idx);
     build(root, S);
 }
 
@@ -192,36 +191,6 @@ SATree<D>::~SATree()
 {
     if (root)
         delete root;
-}
-
-template <int D>
-void SATree<D>::print(SATreeNode<D> * node, int space)
-{
-    for (int i = 0; i < space; i++)
-        std::cout << "  ";
-    std::cout << "|- " << node->point.to_string() << " ";
-    std::cout << "|N(a)| = " << node->neighbours.size() << std::endl;
-    for (auto n : node->neighbours)
-        print(n, space + 1);
-}
-
-template <int D>
-std::string SATree<D>::to_string(SATreeNode<D> * node)
-{
-    std::string res;
-    res += "{" + node->point.to_string() + "}";
-    if (node->neighbours.size() > 0)
-    {
-        res += "(";
-        for (auto n : node->neighbours)
-        {
-            if (n != *(node->neighbours.begin()))
-                res += ",";
-            res += to_string(n);
-        }
-        res += ")";
-    }
-    return res;
 }
 
 template <int D>
