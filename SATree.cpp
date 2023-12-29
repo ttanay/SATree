@@ -42,7 +42,7 @@ SATreeNode::~SATreeNode()
 }
 
 
-SATree::SATree(std::vector<Point> & S)
+SATree::SATree(std::vector<Point> S)
 {
     int root_idx = rand() % S.size();
     root = new SATreeNode(S[root_idx]);

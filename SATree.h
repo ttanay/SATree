@@ -13,7 +13,6 @@
 struct Point
 {
     std::vector<float> v;
-    // ~Point() { delete[] v; }
 
     std::string to_string();
     friend bool operator==(const Point & self, const Point & other);
@@ -57,7 +56,7 @@ class SATree
     std::optional<Point> range_search(SATreeNode * node, Point query, float radius, float digression);
 
 public:
-    SATree(std::vector<Point> & S);
+    SATree(std::vector<Point> S);
     ~SATree();
 
     void print() { return print(root, 0); }
