@@ -1,0 +1,6 @@
+---------------------------------------------------------------
+Benchmark                     Time             CPU   Iterations
+---------------------------------------------------------------
+BM_SATreeBuild             24.9 s          24.8 s             1
+BM_SATreeRangeSearch      0.021 s         0.021 s            87
+BM_SATreekNNSearch         1.09 s          1.09 s             1
