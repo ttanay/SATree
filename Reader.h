@@ -51,16 +51,16 @@ class FVecsReader: public BaseVecsReader
 public:
     FVecsReader(char *filename_): BaseVecsReader(filename_) {}
 
-    std::vector<float> readvec()
+    float* readvec()
     {
         if(eof())
             throw std::runtime_error("EOF reached");
 
-        std::vector<float> res(d);
+        float *arr = new float[d];
         skip_dim();
-        fread(&res, sizeof(float), DIM_SIZE, fptr);
+        fread(arr, sizeof(float), d, fptr);
         curr++;
-        return res;
+        return arr;
     }
 };
 
@@ -69,15 +69,15 @@ class IVecsReader: public BaseVecsReader
 public:
     IVecsReader(char *filename_): BaseVecsReader(filename_) {}
 
-    std::vector<int> readvec()
+    int *readvec()
     {
         if(eof())
             throw std::runtime_error("EOF reached");
 
-        std::vector<int> res(d);
+        int *arr = new int[d];
         skip_dim();
-        fread(&res, sizeof(int), DIM_SIZE, fptr);
+        fread(arr, sizeof(int), d, fptr);
         curr++;
-        return res;
+        return arr;
     }
 };
