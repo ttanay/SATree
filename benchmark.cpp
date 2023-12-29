@@ -7,13 +7,16 @@
 static void BM_SATreeBuild(benchmark::State &state)
 {
     char filename[] = "dataset/siftsmall/siftsmall_base.fvecs";
-    FVecsReader reader{filename};
+    FVecsReader reader;
+    reader.open(filename);
     Points input;
+    int counter{0};
     while(!reader.eof())
     {
         float *v = reader.readvec();
         std::vector<float> vf(v, v + reader.dimension());
-        input.push_back(Point{vf});
+        input.push_back(Point{counter, vf});
+        counter++;
     }
 
     for(auto _: state)
@@ -23,43 +26,51 @@ static void BM_SATreeBuild(benchmark::State &state)
 static void BM_SATreeRangeSearch(benchmark::State &state)
 {
     char bvecs_filename[] = "dataset/siftsmall/siftsmall_base.fvecs";
-    FVecsReader reader{bvecs_filename};
+    FVecsReader reader;
+    reader.open(bvecs_filename);
     Points input;
+    int counter{0};
     while(!reader.eof())
     {
         float *v = reader.readvec();
         std::vector<float> vf(v, v + reader.dimension());
-        input.push_back(Point{vf});
+        input.push_back(Point{counter, vf});
+        counter++;
     }
+    reader.close();
 
     char query_filename[] = "dataset/siftsmall/siftsmall_query.fvecs";
-    FVecsReader qreader{query_filename};
-    float *qvec = qreader.readvec();
-    std::vector<float> qv(qvec, qvec + qreader.dimension());
-    Point query{qv};
+    reader.open(query_filename);
+    float *qvec = reader.readvec();
+    std::vector<float> qv(qvec, qvec + reader.dimension());
+    Point query{-1, qv};
     SATree tree(input);
 
     for(auto _: state)
-        tree.range_search(query, 5.0);
+        tree.range_search(query, 20.0);
 }
 
 static void BM_SATreekNNSearch(benchmark::State &state)
 {
     char bvecs_filename[] = "dataset/siftsmall/siftsmall_base.fvecs";
-    FVecsReader reader{bvecs_filename};
+    FVecsReader reader;
+    reader.open(bvecs_filename);
     Points input;
+    int counter{0};
     while(!reader.eof())
     {
         float *v = reader.readvec();
         std::vector<float> vf(v, v + reader.dimension());
-        input.push_back(Point{vf});
+        input.push_back(Point{counter, vf});
+        counter++;
     }
+    reader.close();
 
     char query_filename[] = "dataset/siftsmall/siftsmall_query.fvecs";
-    FVecsReader qreader{query_filename};
-    float *qvec = qreader.readvec();
-    std::vector<float> qv(qvec, qvec + qreader.dimension());
-    Point query{qv};
+    reader.open(query_filename);
+    float *qvec = reader.readvec();
+    std::vector<float> qv(qvec, qvec + reader.dimension());
+    Point query{-1, qv};
     SATree tree(input);
 
     for(auto _: state)

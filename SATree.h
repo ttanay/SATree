@@ -12,6 +12,7 @@
 
 struct Point
 {
+    int node_id{-1};
     std::vector<float> v;
 
     std::string to_string();

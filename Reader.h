@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -16,7 +18,11 @@ protected:
     int d;
     int curr{0};
 
-    BaseVecsReader(char * filename)
+public:
+    ~BaseVecsReader() { if(fptr) close(); }
+    BaseVecsReader() = default;
+    BaseVecsReader(char *filename) { open(filename); }
+    void open(char * filename)
     {
         fptr = fopen(filename, "rb");
         if (fptr == NULL)
@@ -32,11 +38,15 @@ protected:
 
         fseek(fptr, 0, SEEK_SET);
     }
-public:
 
-    ~BaseVecsReader() { fclose(fptr); }
+    void close() {
+        fclose(fptr);
+        curr = 0;
+    }
 
     bool eof() { return feof(fptr) || curr >= n; }
+
+    inline int vec_id() { return curr; }
 
     inline int num_vectors() { return n; }
 
@@ -49,8 +59,6 @@ public:
 class FVecsReader: public BaseVecsReader
 {
 public:
-    FVecsReader(char *filename_): BaseVecsReader(filename_) {}
-
     float* readvec()
     {
         if(eof())
@@ -67,8 +75,6 @@ public:
 class IVecsReader: public BaseVecsReader
 {
 public:
-    IVecsReader(char *filename_): BaseVecsReader(filename_) {}
-
     int *readvec()
     {
         if(eof())
