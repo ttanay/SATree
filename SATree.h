@@ -7,6 +7,7 @@
 #include <queue>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 
@@ -50,9 +51,12 @@ class SATree
 {
     SATreeNode * root;
 
+    std::unordered_map<std::string, float> distance_cache;
+
     void build(SATreeNode * a, Points & S);
     void print(SATreeNode * node, int space);
     std::string to_string(SATreeNode * node);
+    float cached_distance(Point p, Point q);
 
     std::optional<Point> range_search(SATreeNode * node, Point query, float radius, float digression);
 

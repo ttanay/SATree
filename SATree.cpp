@@ -31,6 +31,21 @@ float distance(Point p, Point q)
 }
 
 
+float SATree::cached_distance(Point p, Point q)
+{
+    std::string k = std::to_string(p.node_id) + "," + std::to_string(q.node_id);
+    auto res = distance_cache.find(k);
+    if(res != distance_cache.end())
+        return res->second;
+
+    std::string krev = std::to_string(q.node_id) + "," + std::to_string(p.node_id);
+    auto val = distance(p, q);
+    distance_cache[k] = val;
+    distance_cache[krev] = val;
+    return val;
+}
+
+
 SATreeNode::~SATreeNode()
 {
     if (neighbours.empty())
@@ -54,20 +69,20 @@ SATree::SATree(std::vector<Point> S)
 
 void SATree::build(SATreeNode * a, std::vector<Point> & S)
 {
-    auto distance_from_a = [&a](Point p, Point q) { return distance(p, a->point) < distance(q, a->point); };
+    auto distance_from_a = [&](Point p, Point q) { return cached_distance(p, a->point) < cached_distance(q, a->point); };
     std::sort(S.begin(), S.end(), distance_from_a);
 
     // Add `v` as neighbour if it is closer to `a` than its neighbours.
     auto v = S.begin();
     while (v != S.end())
     {
-        a->covering_radius = std::max(a->covering_radius, distance(*v, a->point));
+        a->covering_radius = std::max(a->covering_radius, cached_distance(*v, a->point));
         bool add_to_neighbour{true};
         // For the case of the first `v`,
         // add it to the neighbour set since it is already sorted by distance to a
         for (auto b : a->neighbours)
         {
-            if (!(distance(*v, a->point) < distance(*v, b->point)))
+            if (!(cached_distance(*v, a->point) < cached_distance(*v, b->point)))
             {
                 add_to_neighbour = false;
                 break;
@@ -95,7 +110,7 @@ void SATree::build(SATreeNode * a, std::vector<Point> & S)
         int neighbour_idx; // {0}; Is initialization needed here?
         for (int i = 0; i < bags.size(); i++)
         {
-            auto d = distance(v, a->neighbours[i]->point);
+            auto d = cached_distance(v, a->neighbours[i]->point);
             if (d < min_distance)
             {
                 min_distance = d;
